@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper为映射的根节点-->
+<!-- mapper为映射的根节点，namespace指定Dao接口的完整类名
+mybatis会依据这个接口动态创建一个实现类去实现这个接口，
+而这个实现类是一个Mapper对象-->
+<mapper namespace="com.swpu.cl.mapper.ProductMapper">
+    <resultMap id="productMap" type="product">
+        <id column="product_id" property="productId"></id>
+        <result column="product_name" property="productName"></result>
+        <result column="product_price" property="productPrice"></result>
+        <result column="product_score" property="ratingScore"></result>
+        <result column="stock_quantity" property="stockQuantity"></result>
+        <result column="product_state" property="productState"></result>
+
+        <!--        一对多-->
+        <collection property="images" ofType="images" column="product_id" select="com.swpu.cl.mapper.ImagesMapper.findImages">
+            <id column="images_id" property="imagesId"></id>
+            <result column="images_name" property="imagesName"></result>
+            <result column="images_state" property="imagesState"></result>
+        </collection>
+<!--        colors 一对多-->
+        <collection property="colors" ofType="colors" column="product_id" select="com.swpu.cl.mapper.ColorsMapper.findColors">
+            <id column="colors_id" property="colorsId"></id>
+            <result column="colors_name" property="colorsName"></result>
+        </collection>
+
+    </resultMap>
+<!--          模糊分页查询  -->
+    <select id="productList" resultMap="productMap">
+        select
+            *
+        from
+            product
+        where
+            product.product_name like concat('%',#{param},'%')
+        and
+            product.product_state = 0
+    </select>
+
+<!--    查询单个商品的信息(需要映射多张表)-->
+    <select id="findProductByProductName" resultMap="productMap">
+        select *
+        from product
+        where
+            product.product_name = #{productName}
+        and
+            product.product_state = 0
+    </select>
+</mapper>

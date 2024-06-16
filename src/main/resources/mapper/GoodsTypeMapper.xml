@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper为映射的根节点-->
+<!-- mapper为映射的根节点，namespace指定Dao接口的完整类名
+mybatis会依据这个接口动态创建一个实现类去实现这个接口，
+而这个实现类是一个Mapper对象-->
+<mapper namespace="com.swpu.cl.mapper.GoodsTypeMapper">
+
+    <resultMap id="goodsTypeMap" type="goodsType">
+        <id column="goods_type_id" property="goodsTypeId"></id>
+        <result column="commodity_type" property="commodityType"></result>
+
+<!--        一对多查询  ofType :指明property对应的类型-->
+        <collection property="goods" ofType="goods">
+            <id column="goods_id" property="goodsId"></id>
+            <result column="goods_name" property="goodsName"></result>
+        </collection>
+    </resultMap>
+
+<!--    定义全部商品分类查询-->
+    <select id="goodsTypeList" resultMap="goodsTypeMap">
+        SELECT
+            goods_type.*,
+            goods.*
+        FROM
+            goods_type
+                left join goods_type_item_type_rel ON
+                goods_type.goods_type_id = goods_type_item_type_rel.goods_type_id
+                left JOIN  item_type ON goods_type_item_type_rel.item_type_id = item_type.item_type_id
+                left JOIN goods_item_type_rel ON item_type.item_type_id = goods_item_type_rel.goods_item_type_id
+                LEFT JOIN goods ON goods_item_type_rel.goods_id = goods.goods_id
+    </select>
+</mapper>
