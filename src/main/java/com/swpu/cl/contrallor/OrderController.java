@@ -93,33 +93,33 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/tradeQrCode")
-    public ResponseMessage generateTradeQrCode(@RequestBody Map<String, String> orderInfo) {
-        String orderIdStr = orderInfo.get("orderId");
-        if (orderIdStr == null || orderIdStr.isEmpty()) {
-            return new ResponseMessage(400, "Order ID is missing", null);
-        }
-
-        Integer orderId = Integer.parseInt(orderIdStr);
-        Order order = (Order) redisTemplate.opsForValue().get("order:" + orderId);
-        if (order == null) {
-            order = orderMapper.selectOrderById(orderId);
-            if (order != null) {
-                redisTemplate.opsForValue().set("order:" + orderId, order, 1, TimeUnit.HOURS);
-            }
-        }
-
-        if (order == null) {
-            return new ResponseMessage(404, "Order not found", null);
-        }
-
-        try {
-            String qrCodeUrl = alipayService.createTrade(order.getOrderNumber(), order.getOrderTotalPrice());
-            Map<String, Object> data = new HashMap<>();
-            data.put("qrCodeUrl", qrCodeUrl);
-            return new ResponseMessage(200, "QR Code generated successfully", data);
-        } catch (AlipayApiException e) {
-            return new ResponseMessage(500, "Failed to generate QR Code", e.getMessage());
-        }
-    }
+//    @PostMapping("/tradeQrCode")
+//    public ResponseMessage generateTradeQrCode(@RequestBody Map<String, String> orderInfo) {
+//        String orderIdStr = orderInfo.get("orderId");
+//        if (orderIdStr == null || orderIdStr.isEmpty()) {
+//            return new ResponseMessage(400, "Order ID is missing", null);
+//        }
+//
+//        Integer orderId = Integer.parseInt(orderIdStr);
+//        Order order = (Order) redisTemplate.opsForValue().get("order:" + orderId);
+//        if (order == null) {
+//            order = orderMapper.selectOrderById(orderId);
+//            if (order != null) {
+//                redisTemplate.opsForValue().set("order:" + orderId, order, 1, TimeUnit.HOURS);
+//            }
+//        }
+//
+//        if (order == null) {
+//            return new ResponseMessage(404, "Order not found", null);
+//        }
+//
+//        try {
+//            String qrCodeUrl = alipayService.createTrade(order.getOrderNumber(), order.getOrderTotalPrice());
+//            Map<String, Object> data = new HashMap<>();
+//            data.put("qrCodeUrl", qrCodeUrl);
+//            return new ResponseMessage(200, "QR Code generated successfully", data);
+//        } catch (AlipayApiException e) {
+//            return new ResponseMessage(500, "Failed to generate QR Code", e.getMessage());
+//        }
+//    }
 }
