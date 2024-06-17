@@ -105,6 +105,7 @@ public class UserController {
         String userGender = user.getUserGender();
         String userEmail = user.getUserEmail();
         String userPhone = user.getUserPhone();
+        String userImage = user.getUserImage();
 
         if (StringUtils.isEmpty(username))
             return new ResponseMessage(500, "用户名不能为空");
