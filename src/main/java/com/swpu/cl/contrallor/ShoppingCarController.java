@@ -8,6 +8,7 @@ import com.swpu.cl.pojo.Order;
 import com.swpu.cl.pojo.ShoppingCar;
 import com.swpu.cl.pojo.User;
 import com.swpu.cl.utils.ResponseMessage;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -40,7 +41,7 @@ public class ShoppingCarController {
     @GetMapping("/findShopping")
     public ResponseMessage findShopping(String shoppingCarUsername) {
         List<ShoppingCar> cars = shoppingCarMapper.selectList(new QueryWrapper<ShoppingCar>().eq("shopping_car_username", shoppingCarUsername));
-        return new ResponseMessage(200, "购物车数据", cars);
+        return new ResponseMessage(200, "msg", cars);
     }
     // 添加商品到购物车
     @PostMapping("/addToCart")
@@ -63,11 +64,12 @@ public class ShoppingCarController {
     }
 
     // 更新购物车http://localhost:9001/front/shoppingCar/updateShopping
-    @PostMapping("/updateShopping")
+    @PutMapping("/updateShopping")
     public ResponseMessage updateShopping(@RequestBody ShoppingCar shoppingCar) {
         // 只更新商品的数量（这里与前端只更新商品的数量对应，如果这里只使用了update方法，会出现错误）
         ShoppingCar existingCar = shoppingCarMapper.selectById(shoppingCar.getShoppingCarId());
         if (existingCar != null) {
+            // 专门更新商品数量
             existingCar.setProductAmount(shoppingCar.getProductAmount());
             int res = shoppingCarMapper.updateById(existingCar);
             if (res > 0) {
@@ -78,14 +80,14 @@ public class ShoppingCarController {
     }
 
     // 删除用户购物车中的商品数据
-    @PostMapping("/deleteShopping")
+    @DeleteMapping("/deleteShopping")
     public ResponseMessage delete(@RequestBody ShoppingCar shoppingCar){
         int res = shoppingCarMapper.deleteById(shoppingCar.getShoppingCarId());
         return res>0 ? new ResponseMessage(200,"操作成功") : new ResponseMessage(500,"操作失败");
     }
 
     // 删除已经选择的商品
-    @PostMapping("/deleteSelected")
+    @DeleteMapping("/deleteSelected")
     public ResponseMessage deleteSelected(@RequestBody List<ShoppingCar> shoppingCars) {
         for (ShoppingCar shoppingCar : shoppingCars) {
             int res = shoppingCarMapper.deleteById(shoppingCar.getShoppingCarId());
@@ -97,7 +99,7 @@ public class ShoppingCarController {
     }
 
     // 清空用户购物车
-    @PostMapping("/clearShopping")
+    @DeleteMapping("/clearShopping")
     public ResponseMessage clearShopping(String shoppingCarUsername) {
         int res = shoppingCarMapper.delete(new QueryWrapper<ShoppingCar>().eq("shopping_car_username", shoppingCarUsername));
         return res > 0 ? new ResponseMessage(200, "购物车已清空") : new ResponseMessage(500, "清空购物车失败");

@@ -25,6 +25,8 @@ public class AlipayConfig {
     public static String charset = "utf-8";
 
     // 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+
+    //使用natapp进行内网穿透： natapp -authtoken=6e024fdc9988276a
     public static String notify_url = "http://nvcn3a.natappfree.cc/pay/form";
 
     // 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
