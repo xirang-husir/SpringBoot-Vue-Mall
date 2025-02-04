@@ -1,2 +1,2 @@
 # SpringBoot-Vue-Mall
-基于SpringBoot+Vue的网上商城
+The back - end part of the online mall based on Springboot + Vue
